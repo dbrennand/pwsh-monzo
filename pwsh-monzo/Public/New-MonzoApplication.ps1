@@ -4,49 +4,68 @@ function New-MonzoApplication {
         Create a Monzo API application.
     
     .DESCRIPTION
-        Creates a Monzo API application to authenticate with the Monzo Bank API.
+        Creates a Monzo API application, used to authenticate with the Monzo Bank API.
     
     .PARAMETER Name
         The name of the Monzo application.
     
     .PARAMETER ClientCredential
-        A Get-Credentials object containing the apps client ID and secret as user and password.
+        A System.Management.Automation.PSCredential object containing the apps client ID and client secret as username and password.
     
     .PARAMETER RedirectURI
         The redirect URI to use for the application.
     
-    .EXAMPLE
-        New-MonzoApplication -Name "MyMonzoApp"
+    .PARAMETER Guid
+        The GUID (state token) used to protect against cross-site request forgery. If one isn't provided, one is generated for you.
     
     .EXAMPLE
         $Credentials = Get-Credential
-        New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com"
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials
     
+    .EXAMPLE
+        $Credentials = Get-Credential
+        $MyGuid = [Guid]::NewGuid()
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com/oauth/callback" -Guid $MyGuid
+    
+    .EXAMPLE
+        $ClientId = "ClientID"
+        $ClientSecret = ConvertTo-SecureString -String "SuperSecretClientSecret" -AsPlainText -Force
+        $Credentials = New-Object -TypeName "System.Management.Automation.PSCredential" -ArgumentList $ClientId, $ClientSecret
+        $MyGuid = [Guid]::NewGuid()
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com/oauth/callback" -Guid $MyGuid
     #>
     [OutputType("MonzoAPI.Application")]
     param (
         [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [String]
         $Name,
 
         [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         $ClientCredential,
 
-        [Parameter(AttributeValues)]
-        [ParameterType]
-        $ParameterName
+        [Parameter(Mandatory = $false)]
+        # https://docs.microsoft.com/en-us/dotnet/api/system.urikind?view=netframework-4.8#fields
+        [ValidateScript( { [System.Uri]::IsWellFormedUriString($_, [System.UriKind]::Absolute) })]
+        [String]
+        $RedirectURI = "https://localhost:8888/oauth/callback",
+
+        [Parameter(Mandatory = $false)]
+        [ValidateNotNullOrEmpty()]
+        [Guid]
+        $Guid = [Guid]::NewGuid()
     )
-    
-    begin {
-        
-    }
-    
-    process {
-        
-    }
-    
-    end {
-        
+
+    Process {
+
+        [PSCustomObject]@{
+            PSTypeName       = "MonzoAPI.Application"
+            Name             = $Name
+            ClientCredential = $ClientCredential
+            RedirectURI      = $RedirectURI
+            Guid             = $Guid
+        }
     }
 }
