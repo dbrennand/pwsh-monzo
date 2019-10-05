@@ -126,6 +126,7 @@ function New-MonzoAuthorisationCode {
             $CallbackUrlList = $CallbackUrl.Query.Trim("?code=").Split("&state=")
             $AuthorisationCode = $CallbackUrlList[0]
             $StateToken = $CallbackUrlList[1]
+            Write-Verbose -Message "Authorisation code: $($AuthorisationCode) State token: $($StateToken)"
 
             # Check if state token differs from original state token (GUID).
             # If so, abort the authorisation process.

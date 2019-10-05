@@ -60,6 +60,7 @@ function New-MonzoApplication {
 
     Process {
 
+        # Populate PSCustom Object MonzoAPI.Application.
         [PSCustomObject]@{
             PSTypeName       = "MonzoAPI.Application"
             Name             = $Name
