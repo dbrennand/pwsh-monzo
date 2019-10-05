@@ -13,11 +13,11 @@ function New-MonzoAuthorisationCode {
         The email address used during the authentication process to retrieve the authorisation code.
     
     .EXAMPLE
-        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com/oauth/callback" -Guid $MyGuid
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com/oauth/callback" -StateToken $StateToken
         $AuthorisationCode = $MonzoApplication | New-MonzoAuthorisationCode -Email "foobar@somemail.com"
     
     .EXAMPLE
-        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com/oauth/callback" -Guid $MyGuid
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com/oauth/callback" -StateToken $StateToken
         $AuthorisationCode = New-MonzoAuthorisationCode -MonzoApplication $MonzoApplication -Email "foobar@somemail.com"
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
@@ -75,7 +75,7 @@ function New-MonzoAuthorisationCode {
             client_id=$($MonzoApplication.ClientCredential.UserName)
             &redirect_uri=$($MonzoApplication.RedirectURI)
             &response_type=code
-            &state=$($MonzoApplication.Guid.Guid)"
+            &state=$($MonzoApplication.StateToken.Guid)"
             Write-Verbose -Message "The url is: $($Url)"
             
             # Automate browser using Selenium to accept the application.
@@ -119,8 +119,16 @@ function New-MonzoAuthorisationCode {
         try {
             # $CallbackUrl matched successfully. Stop the driver.
             Stop-SeDriver -Driver $Driver            
-            # Fetch authorisation code from $CallbackUrl
-            $AuthorisationCode = $CallbackUrl.Query.Trim("?code=").Split("&state=")[0]
+            # Fetch authorisation code and state token from $CallbackUrl.
+            $CallbackUrlList = $CallbackUrl.Query.Trim("?code=").Split("&state=")
+            $AuthorisationCode = $CallbackUrlList[0]
+            $StateToken = $CallbackUrlList[1]
+
+            # Check if state token differs from original state token (GUID).
+            # If so, abort the authorisation process.
+            if ($StateToken -notlike $MonzoApplication.StateToken.Guid) {
+                Write-Error -Message "The state token recieved from the redirect uri: $($StateToken) doesn't match the original state token: $($MonzoApplication.StateToken.Guid)" -ErrorAction "Stop"
+            }
 
             # Populate PSCustom Object MonzoAPI.OAuth.AuthorisationCode.
             [PSCustomObject]@{
