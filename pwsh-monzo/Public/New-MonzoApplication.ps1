@@ -24,8 +24,7 @@ function New-MonzoApplication {
     
     .EXAMPLE
         $Credentials = Get-Credential
-        $StateToken = [Guid]::NewGuid()
-        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://foobar.com/oauth/callback" -StateToken $StateToken
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://foobar.com/oauth/callback"
     
     .EXAMPLE
         $ClientId = "ClientID"
