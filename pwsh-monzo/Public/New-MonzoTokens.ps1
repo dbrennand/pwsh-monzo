@@ -74,29 +74,34 @@ function New-MonzoTokens {
 
     process {
 
-        # Initalise request parameters.
-        # If switch is or isn't supplied, set $RequestBody accordingly.
-        switch ($RefreshToken) {
-            $true {
-                $RequestBody = @{
-                    grant_type    = "refresh_token" 
-                    client_id     = $ClientCredential.UserName
-                    client_secret = $ClientCredential.Password
-                    refresh_token = $MonzoRefreshToken
+        try {
+            # Initalise request parameters.
+            # If switch is or isn't supplied, set $RequestBody accordingly.
+            switch ($RefreshToken) {
+                $true {
+                    $RequestBody = @{
+                        grant_type    = "refresh_token" 
+                        client_id     = $ClientCredential.UserName
+                        client_secret = $ClientCredential.Password
+                        refresh_token = $MonzoRefreshToken
+                    }
+                }
+                $false {
+                    $RequestBody = @{
+                        grant_type    = "authorization_code" 
+                        client_id     = $MonzoAuthorisationCode.MonzoApplication.ClientCredential.UserName
+                        client_secret = $MonzoAuthorisationCode.MonzoApplication.ClientCredential.Password
+                        redirect_uri  = $MonzoAuthorisationCode.MonzoApplication.RedirectUri
+                        code          = $MonzoAuthorisationCode.AuthorisationCode
+                    }
                 }
             }
-            $false {
-                $RequestBody = @{
-                    grant_type    = "authorization_code" 
-                    client_id     = $MonzoAuthorisationCode.MonzoApplication.ClientCredential.UserName
-                    client_secret = $MonzoAuthorisationCode.MonzoApplication.ClientCredential.Password
-                    redirect_uri  = $MonzoAuthorisationCode.MonzoApplication.RedirectUri
-                    code          = $MonzoAuthorisationCode.AuthorisationCode
-                }
-            }
+            # Make POST request to Monzo API to retrieve an access and refresh token.
+            $Response = Invoke-RestMethod -Method "POST" -Uri "https://api.monzo.com/oauth2/token" -Body $RequestBody -Verbose:($PSBoundParameters["Verbose"] -eq $true)
         }
-        # Make POST request to Monzo API to retrieve an access and refresh token.
-        $Response = Invoke-RestMethod -Method "POST" -Uri "https://api.monzo.com/oauth2/token" -Body $RequestBody -Verbose:($PSBoundParameters["Verbose"] -eq $true)
+        catch {
+            $PSCmdlet.ThrowTerminatingError($PSItem)
+        }
     }
 
     end {
