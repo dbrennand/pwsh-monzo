@@ -15,8 +15,8 @@ function New-MonzoApplication {
     .PARAMETER RedirectURI
         The redirect URI to use for the application.
     
-    .PARAMETER Guid
-        The GUID (state token) used to protect against cross-site request forgery. If one isn't provided, one is generated for you.
+    .PARAMETER StateToken
+        The state token used to protect against cross-site request forgery. If one isn't provided, one is generated for you.
     
     .EXAMPLE
         $Credentials = Get-Credential
@@ -24,15 +24,15 @@ function New-MonzoApplication {
     
     .EXAMPLE
         $Credentials = Get-Credential
-        $MyGuid = [Guid]::NewGuid()
-        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com/oauth/callback" -Guid $MyGuid
+        $StateToken = [Guid]::NewGuid()
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com/oauth/callback" -StateToken $StateToken
     
     .EXAMPLE
         $ClientId = "ClientID"
         $ClientSecret = ConvertTo-SecureString -String "SuperSecretClientSecret" -AsPlainText -Force
         $Credentials = New-Object -TypeName "System.Management.Automation.PSCredential" -ArgumentList $ClientId, $ClientSecret
-        $MyGuid = [Guid]::NewGuid()
-        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com/oauth/callback" -Guid $MyGuid
+        $StateToken = [Guid]::NewGuid()
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com/oauth/callback" -StateToken $StateToken
     #>
     [OutputType("MonzoAPI.Application")]
     param (
@@ -55,7 +55,7 @@ function New-MonzoApplication {
         [Parameter(Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [Guid]
-        $Guid = [Guid]::NewGuid()
+        $StateToken = [Guid]::NewGuid()
     )
 
     Process {
@@ -65,7 +65,7 @@ function New-MonzoApplication {
             Name             = $Name
             ClientCredential = $ClientCredential
             RedirectURI      = $RedirectURI
-            Guid             = $Guid
+            StateToken       = $StateToken
         }
     }
 }
