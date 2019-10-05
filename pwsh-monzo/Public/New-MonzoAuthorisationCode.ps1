@@ -19,6 +19,9 @@ function New-MonzoAuthorisationCode {
     .EXAMPLE
         $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://foobar.com/oauth/callback" -StateToken $StateToken
         $AuthorisationCode = New-MonzoAuthorisationCode -MonzoApplication $MonzoApplication -Email "foobar@somemail.com"
+    
+    .NOTES
+        https://docs.monzo.com/#acquire-an-access-token
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     [OutputType("MonzoAPI.OAuth.AuthorisationCode")]

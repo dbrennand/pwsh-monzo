@@ -36,6 +36,7 @@ function New-MonzoTokens {
     .NOTES
         Use the parameters MonzoAuthorisationCode and MonzoRefreshToken when getting an access token and refresh token for the first time.
         For refreshing, ensure you provide the -RefreshToken switch.
+        https://docs.monzo.com/#acquire-an-access-token
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     [OutputType("MonzoAPI.OAuth.Tokens")]
