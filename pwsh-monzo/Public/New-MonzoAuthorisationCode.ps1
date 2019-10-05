@@ -49,7 +49,7 @@ function New-MonzoAuthorisationCode {
 
         # Before doing anything, check that the PSCustomObject contains clientID and clientSecret.
         if (-not ($MonzoApplication.ClientCredential.UserName -and $MonzoApplication.ClientCredential.Password)) {
-            Write-Error -Message "ClientId and ClientSecret weren't present in MonzoAPI.Application." -ErrorAction "Stop"
+            Write-Error -Message "ClientId and clientsecret weren't present in MonzoAPI.Application." -ErrorAction "Stop"
         }
 
         # Check if Selenium is installed on the host.
