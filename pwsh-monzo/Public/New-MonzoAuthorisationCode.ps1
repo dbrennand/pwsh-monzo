@@ -62,7 +62,7 @@ function New-MonzoAuthorisationCode {
         else {
             Write-Error -Message "Selenium isn't installed, attempting to install..."
             try {
-                Install-Module -Name "Selenium" -RequiredVersion "2.0.0" -Force -AllowClobber -Verbose
+                Install-Module -Name "Selenium" -Force -AllowClobber -Verbose
             }
             catch {
                 Write-Error -Message "Selenium failed to install. Terminating..." -ErrorAction "Stop"
