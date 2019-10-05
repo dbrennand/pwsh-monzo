@@ -13,11 +13,11 @@ function New-MonzoAuthorisationCode {
         The email address used during the authentication process to retrieve the authorisation code.
     
     .EXAMPLE
-        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com/oauth/callback" -StateToken $StateToken
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://foobar.com/oauth/callback" -StateToken $StateToken
         $AuthorisationCode = $MonzoApplication | New-MonzoAuthorisationCode -Email "foobar@somemail.com"
     
     .EXAMPLE
-        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectURI "https://foobar.com/oauth/callback" -StateToken $StateToken
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://foobar.com/oauth/callback" -StateToken $StateToken
         $AuthorisationCode = New-MonzoAuthorisationCode -MonzoApplication $MonzoApplication -Email "foobar@somemail.com"
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
@@ -73,7 +73,7 @@ function New-MonzoAuthorisationCode {
             # Build url.
             $Url = "https://auth.monzo.com/?
             client_id=$($MonzoApplication.ClientCredential.UserName)
-            &redirect_uri=$($MonzoApplication.RedirectURI)
+            &redirect_uri=$($MonzoApplication.RedirectUri)
             &response_type=code
             &state=$($MonzoApplication.StateToken.Guid)"
             Write-Verbose -Message "The url is: $($Url)"
