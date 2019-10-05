@@ -7,7 +7,7 @@ function New-MonzoTokens {
         Obtain a new Monzo access token and refresh token from the Monzo bank API.
     
     .PARAMETER MonzoAuthorisationCode
-        A MonzoAPI.OAuth.AuthorisationCode PSCustomObject. Obtained from Get-MonzoAuthorisationCode.
+        A MonzoAPI.OAuth.AuthorisationCode PSCustomObject. Obtained from New-MonzoAuthorisationCode.
     
     .EXAMPLE
         $AuthorisationCode = $MonzoApplication | New-MonzoAuthorisationCode -Email "foobar@somemail.com"
@@ -40,14 +40,29 @@ function New-MonzoTokens {
 
     process {
 
-        # Make POST request to Monzo API to retrieve an access and refresh token.
+        # Initalise request parameters.
         $RequestBody = @{
             grant_type = "authorization_code" 
             client_id = $MonzoAuthorisationCode.MonzoApplication.ClientCredential.UserName
             client_secret = $MonzoAuthorisationCode.MonzoApplication.ClientCredential.Password
             redirect_uri = $MonzoAuthorisationCode.MonzoApplication.RedirectUri
+            code = $MonzoAuthorisationCode.AuthorisationCode
         }
-        Invoke-RestMethod -Method "POST" 
+        # Make POST request to Monzo API to retrieve an access and refresh token.
+        $Response = Invoke-RestMethod -Method "POST" -Uri "https://api.monzo.com/oauth2/token" -Body $RequestBody -Verbose:($PSBoundParameters["Verbose"] -eq $true)
     }
 
+    end {
+
+         # Populate PSCustom Object MonzoAPI.OAuth.Tokens.
+        [PSCustomObject]@{
+            PSTypeName = "MonzoAPI.OAuth.Tokens"
+            AccessToken = $Response.access_token
+            RefreshToken = $Response.refresh_token
+            UserId = $Response.user_id
+            ExpiresIn = $Response.expires_in
+            TokenType = $Response.token_type
+            IssueDateTime = (Get-Date)
+        }
+    }
 }
