@@ -34,7 +34,7 @@ function New-MonzoTokens {
         $MonzoTokens = New-MonzoTokens -ClientCredential $Credentials -MonzoRefreshToken $MonzoRefreshToken -RefreshToken
     
     .NOTES
-        Use the parameter MonzoAuthorisationCode when getting an access token and refresh token for the first time.
+        Use the parameters MonzoAuthorisationCode and MonzoRefreshToken when getting an access token and refresh token for the first time.
         For refreshing, ensure you provide the -RefreshToken switch.
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
