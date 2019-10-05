@@ -47,7 +47,7 @@ function New-MonzoAuthorisationCode {
     
     begin {
 
-        # Before doing anything, check that the PSCustomObject contains ClientID and ClientSecret.
+        # Before doing anything, check that the PSCustomObject contains clientID and clientSecret.
         if (-not ($MonzoApplication.ClientCredential.UserName -and $MonzoApplication.ClientCredential.Password)) {
             Write-Error -Message "ClientId and ClientSecret weren't present in MonzoAPI.Application." -ErrorAction "Stop"
         }
