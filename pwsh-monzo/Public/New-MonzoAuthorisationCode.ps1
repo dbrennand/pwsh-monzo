@@ -14,10 +14,6 @@ function New-MonzoAuthorisationCode {
     
     .EXAMPLE
         $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://foobar.com/oauth/callback" -StateToken $StateToken
-        $AuthorisationCode = $MonzoApplication | New-MonzoAuthorisationCode -Email "foobar@somemail.com"
-    
-    .EXAMPLE
-        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://foobar.com/oauth/callback" -StateToken $StateToken
         $AuthorisationCode = New-MonzoAuthorisationCode -MonzoApplication $MonzoApplication -Email "foobar@somemail.com"
     
     .NOTES
@@ -26,9 +22,7 @@ function New-MonzoAuthorisationCode {
     [CmdletBinding(SupportsShouldProcess = $true)]
     [OutputType("MonzoAPI.OAuth.AuthorisationCode")]
     param (
-        [Parameter(Mandatory = $true,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [Alias("MonzoApp")]
         [PSTypeName("MonzoAPI.Application")]
@@ -38,7 +32,7 @@ function New-MonzoAuthorisationCode {
         [ValidateNotNullOrEmpty()]
         [ValidateScript( {
                 try {
-                    $null = [MailAddress]$_
+                    [MailAddress]$_
                 }
                 catch {
                     Write-Error -Message "The email string: $_ is not a valid email address." -ErrorAction "Stop"
@@ -74,18 +68,11 @@ function New-MonzoAuthorisationCode {
         
         try {
             # Build url.
-            $Url = "https://auth.monzo.com/?
-            client_id=$($MonzoApplication.ClientCredential.UserName)
-            &redirect_uri=$($MonzoApplication.RedirectUri)
-            &response_type=code
-            &state=$($MonzoApplication.StateToken.Guid)"
+            $Url = "https://auth.monzo.com/?client_id=$($MonzoApplication.ClientCredential.UserName)&redirect_uri=$($MonzoApplication.RedirectUri)&response_type=code&state=$($MonzoApplication.StateToken.Guid)"
             Write-Verbose -Message "The url is: $($Url)"
             
             # Automate browser using Selenium to accept the application.
-            $Driver = Start-SeFirefox
-            # Navigate to the url.
-            Enter-SeUrl -Url $Url -Driver $Driver
-
+            $Driver = Start-SeFirefox -StartURL $Url -SuppressLogging
             # Find and wait for the button element.
             $Button = Find-SeElement -Driver $Driver -Wait -Timeout 5 -TagName "button"
             # Click the element.
@@ -101,14 +88,22 @@ function New-MonzoAuthorisationCode {
             # Prompt user to login to their email account. As Monzo sends them a "magic link".
             # This "magic link" redirects them back to their chosen RedirectUri.
             Write-Output -InputObject "Monzo has emailed you a 'magic link'.`nHead to your email account in the Selenium browser and click the magic link!"
-            # Fetch the URL if it matches.
-            do {
-                Write-Verbose -Message "Sleeping until redirect uri is detected..."
-                Start-Sleep -Seconds 1
-            } until ($Driver.Url -match "code=[^&]*")
+            Read-Host -Prompt "Press ENTER once the redirect uri tab is loaded and selected"
+
+            # Fetch new tab id.
+            $NewWindowId = $Driver.WindowHandles[1]
+            # Switch to the new tab, containing the redirect Uri.
+            $Driver.SwitchTo().Window($NewWindowId) | Out-Null
             
-            # Store the callback url.
-            [System.Uri]$CallbackUrl = $Driver.Url
+            if ($Driver.Url -match "code=[^&]*") {
+                # Store the callback url.
+                [System.Uri]$CallbackUrl = $Driver.Url
+            }
+            else {
+                # Stop the driver if an error occurs.
+                Stop-SeDriver -Driver $Driver
+                Write-Error "Failed to obtain redirect Uri; Terminating..." -ErrorAction "Stop"
+            }
         }
         catch {
             # Stop the driver if an error occurs.
@@ -121,11 +116,11 @@ function New-MonzoAuthorisationCode {
 
         try {
             # $CallbackUrl matched successfully. Stop the driver.
-            Stop-SeDriver -Driver $Driver            
+            Stop-SeDriver -Driver $Driver
             # Fetch authorisation code and state token from $CallbackUrl.
-            $CallbackUrlList = $CallbackUrl.Query.Trim("?code=").Split("&state=")
-            $AuthorisationCode = $CallbackUrlList[0]
-            $StateToken = $CallbackUrlList[1]
+            $CallbackUrlList = (($CallbackUrl.Query -split "code=") -split "&state=")
+            $AuthorisationCode = $CallbackUrlList[1]
+            $StateToken = $CallbackUrlList[2]
             Write-Verbose -Message "Authorisation code: $($AuthorisationCode) State token: $($StateToken)"
 
             # Check if state token differs from original state token (GUID).
