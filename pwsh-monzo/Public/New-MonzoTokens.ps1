@@ -58,6 +58,7 @@ function New-MonzoTokens {
         $MonzoRefreshToken,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [Switch]
         $RefreshToken
     )
@@ -80,6 +81,7 @@ function New-MonzoTokens {
             # If switch is or isn't supplied, set $RequestBody accordingly.
             switch ($RefreshToken) {
                 $true {
+                    Write-Verbose -Message "Refresh token flow."
                     $RequestBody = @{
                         grant_type    = "refresh_token" 
                         client_id     = $ClientCredential.UserName
@@ -88,6 +90,7 @@ function New-MonzoTokens {
                     }
                 }
                 $false {
+                    Write-Verbose -Message "Authorisation code flow."
                     $RequestBody = @{
                         grant_type    = "authorization_code" 
                         client_id     = $MonzoAuthorisationCode.MonzoApplication.ClientCredential.UserName
