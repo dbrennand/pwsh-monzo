@@ -90,8 +90,8 @@ function New-MonzoAuthorisationCode {
             Write-Output -InputObject "Monzo has emailed you a 'magic link'.`nHead to your email account in the Selenium browser and click the magic link!"
             Read-Host -Prompt "Press ENTER once the redirect uri tab is loaded and selected"
 
-            # Fetch new tab id.
-            $NewWindowId = $Driver.WindowHandles[1]
+            # Fetch the last tab id. Most likely the last tab.
+            $NewWindowId = $Driver.WindowHandles | Select-Object -Last 1
             # Switch to the new tab, containing the redirect Uri.
             $Driver.SwitchTo().Window($NewWindowId) | Out-Null
             
