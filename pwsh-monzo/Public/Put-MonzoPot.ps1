@@ -80,7 +80,8 @@ function Put-MonzoPot {
         # Populate PSCustom Object MonzoAPI.Pot.
         [PSCustomObject]@{
             PSTypeName      = "MonzoAPI.Pot"
-            Pot            = $Response
+            Pot             = $Response
+            DedupeId        = $DedupeId
             RequestDateTime = (Get-Date)
         }
     }
