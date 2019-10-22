@@ -67,12 +67,16 @@ function New-MonzoAuthorisationCode {
     process {
         
         try {
-            # Build url.
+            # Construct url.
             $Url = "https://auth.monzo.com/?client_id=$($MonzoApplication.ClientCredential.UserName)&redirect_uri=$($MonzoApplication.RedirectUri)&response_type=code&state=$($MonzoApplication.StateToken.Guid)"
             Write-Verbose -Message "The url is: $($Url)"
             
             # Automate browser using Selenium to accept the application.
-            $Driver = Start-SeFirefox -StartURL $Url -SuppressLogging
+            $Firefox_Options = New-Object -TypeName "OpenQA.Selenium.Firefox.FirefoxOptions"
+            # Suppress logging.
+            $Firefox_Options.LogLevel = 6
+            $Driver = New-Object -TypeName "OpenQA.Selenium.Firefox.FirefoxDriver" -ArgumentList $Firefox_Options
+            Enter-SeUrl -Driver $Driver -Url $Url
             # Find and wait for the button element.
             $Button = Find-SeElement -Driver $Driver -Wait -Timeout 5 -TagName "button"
             # Click the element.
