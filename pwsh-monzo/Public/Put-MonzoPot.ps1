@@ -68,7 +68,7 @@ function Put-MonzoPot {
                 amount            = $Amount 
                 dedupe_id         = $DedupeId
             }
-            $Response = Invoke-RestMethod -Method "PUT" -Uri "https://api.monzo.com/$PotId/pots" -Headers @{Authorization = "Bearer $($MonzoAccessToken)" } -Body $RequestBody -Verbose:($PSBoundParameters["Verbose"] -eq $true)
+            $Response = Invoke-RestMethod -Method "PUT" -Uri "https://api.monzo.com/pots/$PotId/deposit" -Headers @{Authorization = "Bearer $($MonzoAccessToken)" } -Body $RequestBody -Verbose:($PSBoundParameters["Verbose"] -eq $true)
         }
         catch {
             $PSCmdlet.ThrowTerminatingError($PSItem)
