@@ -14,6 +14,9 @@ function Get-MonzoBalance {
     
     .EXAMPLE
         Get-MonzoBalance -MonzoAccessToken $MonzoAccessToken -AccountId "Account id here."
+    
+    .NOTES
+        https://docs.monzo.com/#read-balance
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     [OutputType("MonzoAPI.Balance")]
