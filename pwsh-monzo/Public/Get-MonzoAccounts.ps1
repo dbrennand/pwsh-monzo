@@ -4,13 +4,16 @@ function Get-MonzoAccounts {
         Get Monzo accounts.
     
     .DESCRIPTION
-        Get a list of accounts owned by the currently authorised user.
+        Get a JSON representation of accounts owned by the currently authorised user.
     
     .PARAMETER MonzoAccessToken
         A Monzo access token - retrieved using New-MonzoTokens.
     
     .EXAMPLE
         Get-MonzoAccounts -MonzoAccessToken $MonzoAccessToken
+    
+    .NOTES
+        https://docs.monzo.com/#list-accounts
     #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     [OutputType("MonzoAPI.Accounts")]
