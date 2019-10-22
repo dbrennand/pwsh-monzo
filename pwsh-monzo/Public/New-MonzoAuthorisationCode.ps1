@@ -59,7 +59,7 @@ function New-MonzoAuthorisationCode {
                 Install-Module -Name "Selenium" -Force -AllowClobber -Verbose
             }
             catch {
-                Write-Error -Message "Selenium failed to install. Terminating..." -ErrorAction "Stop"
+                Write-Error -Message "Failed to install the Selenium module. Terminating..." -ErrorAction "Stop"
             }
         }
     }
