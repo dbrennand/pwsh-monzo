@@ -38,26 +38,26 @@ function New-MonzoTokens {
         For refreshing, ensure you provide the -RefreshToken switch.
         https://docs.monzo.com/#acquire-an-access-token
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     [OutputType("MonzoAPI.OAuth.Tokens")]
     param (
-        [Parameter()]
+        [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [Alias("MonzoAuth")]
         [PSTypeName("MonzoAPI.OAuth.AuthorisationCode")]
         $MonzoAuthorisationCode,
 
-        [Parameter()]
+        [Parameter(Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [System.Management.Automation.PSCredential]
         $ClientCredential,
 
-        [Parameter()]
+        [Parameter(Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [String]
         $MonzoRefreshToken,
 
-        [Parameter()]
+        [Parameter(Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [Switch]
         $RefreshToken
