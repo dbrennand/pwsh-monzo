@@ -1,7 +1,7 @@
 function New-MonzoAuthorisationCode {
     <#
     .SYNOPSIS
-        Obtain a new authorisation code from the Monzo API.
+        Obtain a new authorisation code from the Monzo bank API.
     
     .DESCRIPTION
         Obtain a new authorisation code from the Monzo API which can be exchanged for an access token.
@@ -19,7 +19,7 @@ function New-MonzoAuthorisationCode {
     .NOTES
         https://docs.monzo.com/#acquire-an-access-token
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     [OutputType("MonzoAPI.OAuth.AuthorisationCode")]
     param (
         [Parameter(Mandatory = $true)]
@@ -49,7 +49,7 @@ function New-MonzoAuthorisationCode {
             Write-Error -Message "ClientId and clientsecret weren't present in MonzoAPI.Application." -ErrorAction "Stop"
         }
 
-        # Check if Selenium is installed on the host.
+        # Check if Selenium-PowerShell is installed on the host.
         if (Get-Module -ListAvailable -Name "Selenium") {
             Import-Module -Name "Selenium"
         }
@@ -71,18 +71,20 @@ function New-MonzoAuthorisationCode {
             $Url = "https://auth.monzo.com/?client_id=$($MonzoApplication.ClientCredential.UserName)&redirect_uri=$($MonzoApplication.RedirectUri)&response_type=code&state=$($MonzoApplication.StateToken.Guid)"
             Write-Verbose -Message "The url is: $($Url)"
             
-            # Automate browser using Selenium to accept the application.
+            # Automate browser using Selenium-PowerShell to accept the application.
             $Firefox_Options = New-Object -TypeName "OpenQA.Selenium.Firefox.FirefoxOptions"
             # Suppress logging.
             $Firefox_Options.LogLevel = 6
+            # Create driver object.
             $Driver = New-Object -TypeName "OpenQA.Selenium.Firefox.FirefoxDriver" -ArgumentList $Firefox_Options
+            # Start the browser.
             Enter-SeUrl -Driver $Driver -Url $Url
             # Find and wait for the button element.
             $Button = Find-SeElement -Driver $Driver -Wait -Timeout 5 -TagName "button"
             # Click the element.
             Invoke-SeClick -Element $Button
             # Enter the email into the input field.
-            $EmailField = Find-SeElement -Driver $Driver -TagName "input"
+            $EmailField = Find-SeElement -Driver $Driver -Wait -Timeout 5 -TagName "input"
             Send-SeKeys -Element $EmailField -Keys $Email
             # Find the new button element.
             $Button = Find-SeElement -Driver $Driver -Wait -Timeout 5 -TagName "button"
@@ -91,8 +93,7 @@ function New-MonzoAuthorisationCode {
             
             # Prompt user to login to their email account. As Monzo sends them a "magic link".
             # This "magic link" redirects them back to their chosen RedirectUri.
-            Write-Output -InputObject "Monzo has emailed you a 'magic link'.`nHead to your email account in the Selenium browser and click the magic link!"
-            Read-Host -Prompt "Press ENTER once the redirect uri tab is loaded and selected"
+            $_ = Read-Host -Prompt "Monzo has emailed you a 'magic link'.`nHead to your email account in the Selenium browser and click the magic link!`nPress ENTER once the redirect uri tab is loaded and selected"
 
             # Fetch the last tab id. Most likely the last tab.
             $NewWindowId = $Driver.WindowHandles | Select-Object -Last 1
@@ -105,13 +106,13 @@ function New-MonzoAuthorisationCode {
             }
             else {
                 # Stop the driver if an error occurs.
-                Stop-SeDriver -Driver $Driver
+                Stop-SeDriver -Driver $Driver | Out-Null
                 Write-Error "Failed to obtain redirect Uri; Terminating..." -ErrorAction "Stop"
             }
         }
         catch {
             # Stop the driver if an error occurs.
-            Stop-SeDriver -Driver $Driver
+            Stop-SeDriver -Driver $Driver | Out-Null
             $PSCmdlet.ThrowTerminatingError($PSItem)
         }
     }
@@ -120,7 +121,7 @@ function New-MonzoAuthorisationCode {
 
         try {
             # $CallbackUrl matched successfully. Stop the driver.
-            Stop-SeDriver -Driver $Driver
+            Stop-SeDriver -Driver $Driver | Out-Null
             # Fetch authorisation code and state token from $CallbackUrl.
             $CallbackUrlList = (($CallbackUrl.Query -split "code=") -split "&state=")
             $AuthorisationCode = $CallbackUrlList[1]
