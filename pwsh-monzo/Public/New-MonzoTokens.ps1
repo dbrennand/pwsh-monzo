@@ -41,7 +41,7 @@ function New-MonzoTokens {
     [CmdletBinding()]
     [OutputType("MonzoAPI.OAuth.Tokens")]
     param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [ValidateNotNullOrEmpty()]
         [Alias("MonzoAuth")]
         [PSTypeName("MonzoAPI.OAuth.AuthorisationCode")]
