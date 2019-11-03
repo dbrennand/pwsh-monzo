@@ -10,14 +10,14 @@ function Close-MonzoApplication {
         A Monzo access token.
     
     .EXAMPLE
-         Close-MonzoApplication -MonzoAccessToken "Access token here."
+        Close-MonzoApplication -MonzoAccessToken "Access token here."
     
     .NOTES
         While access tokens do expire after a number of hours, you may wish to invalidate the token instantly at a specific time such as when a user chooses to log out of your application.
         Once invalidated, the user must go through the authentication process again. You will not be able to refresh the access token.
         https://docs.monzo.com/#log-out
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     [OutputType("MonzoAPI.Application.Closed")]
     param (
         [Parameter(Mandatory = $true)]
