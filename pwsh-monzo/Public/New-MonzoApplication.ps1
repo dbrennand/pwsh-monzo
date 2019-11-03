@@ -4,7 +4,7 @@ function New-MonzoApplication {
         Create a Monzo API application.
     
     .DESCRIPTION
-        Creates a Monzo API application, used to authenticate with the Monzo Bank API.
+        Creates a Monzo API application, used to authenticate with the Monzo bank API.
     
     .PARAMETER Name
         The name of the Monzo application.
@@ -57,7 +57,7 @@ function New-MonzoApplication {
         $StateToken = [Guid]::NewGuid()
     )
 
-    Process {
+    process {
 
         # Populate PSCustom Object MonzoAPI.Application.
         [PSCustomObject]@{
