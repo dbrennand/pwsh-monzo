@@ -15,7 +15,7 @@ function Get-MonzoAccounts {
     .NOTES
         https://docs.monzo.com/#list-accounts
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     [OutputType("MonzoAPI.Accounts")]
     param (
         [Parameter(Mandatory = $true)]
@@ -27,7 +27,7 @@ function Get-MonzoAccounts {
     process {
         
         try {
-            $Response = Invoke-RestMethod -Method "GET" -Uri "https://api.monzo.com/accounts" -Headers @{Authorization = "Bearer $($MonzoAccessToken)" } -Verbose:($PSBoundParameters["Verbose"] -eq $true)
+            $Response = Invoke-RestMethod -Method "GET" -Uri "https://api.monzo.com/accounts" -Headers @{ Authorization = "Bearer $($MonzoAccessToken)" } -Verbose:($PSBoundParameters["Verbose"] -eq $true) -ErrorAction "Stop"
         }
         catch {
             $PSCmdlet.ThrowTerminatingError($PSItem)
@@ -36,8 +36,8 @@ function Get-MonzoAccounts {
     
     end {
         
-        # Populate PSCustom Object MonzoAPI.Accounts.
-        [PSCustomObject]@{
+        # Populate PSCustomObject MonzoAPI.Accounts.
+        return [PSCustomObject]@{
             PSTypeName      = "MonzoAPI.Accounts"
             Accounts        = $Response.accounts
             RequestDateTime = (Get-Date)
