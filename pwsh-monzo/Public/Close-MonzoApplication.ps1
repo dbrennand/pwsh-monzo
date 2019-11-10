@@ -29,7 +29,7 @@ function Close-MonzoApplication {
     process {
 
         try {
-            Invoke-RestMethod -Method "POST" -Uri "https://api.monzo.com/oauth2/logout" -Headers @{Authorization = "Bearer $($MonzoAccessToken)" } -Verbose:($PSBoundParameters["Verbose"] -eq $true)
+            Invoke-RestMethod -Method "POST" -Uri "https://api.monzo.com/oauth2/logout" -Headers @{ Authorization = "Bearer $($MonzoAccessToken)" } -Verbose:($PSBoundParameters["Verbose"] -eq $true) -ErrorAction "Stop"
         }
         catch {
             $PSCmdlet.ThrowTerminatingError($PSItem)
@@ -38,12 +38,11 @@ function Close-MonzoApplication {
 
     end {
 
-        # Populate PSCustom Object MonzoAPI.Application.Closed.
-        [PSCustomObject]@{
+        # Populate PSCustomObject MonzoAPI.Application.Closed.
+        return [PSCustomObject]@{
             PSTypeName     = "MonzoAPI.Application.Closed"
             Message        = "The application was successfully logged out."
             ClosedDateTime = (Get-Date)
         }
     }
-    
 }
