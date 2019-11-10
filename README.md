@@ -36,6 +36,8 @@ Import-Module "{FullPath}\pwsh-monzo\Public\pwsh-monzo.psm1"
 
 ## Usage
 
+Provide the `-Verbose` parameter to all cmdlets to produce more output.
+
 ### Using the playground access token:
 
 * Accept the prompt in the Monzo app (on your phone) to allow access to your account.
