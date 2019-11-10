@@ -13,7 +13,7 @@ function New-MonzoAuthorisationCode {
         The email address used during the authentication process to retrieve the authorisation code.
     
     .EXAMPLE
-        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://foobar.com/oauth/callback" -StateToken $StateToken
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://localhost:8888/oauth/callback" -StateToken $StateToken
         $AuthorisationCode = New-MonzoAuthorisationCode -MonzoApplication $MonzoApplication -Email "foobar@somemail.com"
     
     .NOTES
@@ -78,18 +78,18 @@ function New-MonzoAuthorisationCode {
             # Create driver object.
             $Driver = New-Object -TypeName "OpenQA.Selenium.Firefox.FirefoxDriver" -ArgumentList $Firefox_Options
             # Start the browser.
-            Enter-SeUrl -Driver $Driver -Url $Url
+            Enter-SeUrl -Driver $Driver -Url $Url | Out-Null
             # Find and wait for the button element.
             $Button = Find-SeElement -Driver $Driver -Wait -Timeout 5 -TagName "button"
             # Click the element.
-            Invoke-SeClick -Element $Button
+            Invoke-SeClick -Element $Button | Out-Null
             # Enter the email into the input field.
             $EmailField = Find-SeElement -Driver $Driver -Wait -Timeout 5 -TagName "input"
-            Send-SeKeys -Element $EmailField -Keys $Email
+            Send-SeKeys -Element $EmailField -Keys $Email | Out-Null
             # Find the new button element.
             $Button = Find-SeElement -Driver $Driver -Wait -Timeout 5 -TagName "button"
             # Click the new button element.
-            Invoke-SeClick -Element $Button
+            Invoke-SeClick -Element $Button | Out-Null
             
             # Prompt user to login to their email account. As Monzo sends them a "magic link".
             # This "magic link" redirects them back to their chosen RedirectUri.
@@ -134,8 +134,8 @@ function New-MonzoAuthorisationCode {
                 Write-Error -Message "The state token recieved from the redirect uri: $($StateToken) doesn't match the original state token: $($MonzoApplication.StateToken.Guid)" -ErrorAction "Stop"
             }
 
-            # Populate PSCustom Object MonzoAPI.OAuth.AuthorisationCode.
-            [PSCustomObject]@{
+            # Populate PSCustomObject MonzoAPI.OAuth.AuthorisationCode.
+            return [PSCustomObject]@{
                 PSTypeName           = "MonzoAPI.OAuth.AuthorisationCode"
                 AuthorisationCode    = $AuthorisationCode
                 MonzoApplication     = $MonzoApplication
