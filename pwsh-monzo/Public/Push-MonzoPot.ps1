@@ -1,4 +1,4 @@
-function Put-MonzoPot {
+function Push-MonzoPot {
     <#
     .SYNOPSIS
         Deposit to a Monzo pot.
