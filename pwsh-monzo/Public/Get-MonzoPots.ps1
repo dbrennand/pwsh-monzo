@@ -15,7 +15,7 @@ function Get-MonzoPots {
     .NOTES
         https://docs.monzo.com/#list-pots
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     [OutputType("MonzoAPI.Pots")]
     param (
         [Parameter(Mandatory = $true)]
@@ -36,8 +36,8 @@ function Get-MonzoPots {
     
     end {
         
-        # Populate PSCustom Object MonzoAPI.Pots.
-        [PSCustomObject]@{
+        # Populate PSCustomObject MonzoAPI.Pots.
+        return [PSCustomObject]@{
             PSTypeName      = "MonzoAPI.Pots"
             Pots            = $Response.pots
             RequestDateTime = (Get-Date)
