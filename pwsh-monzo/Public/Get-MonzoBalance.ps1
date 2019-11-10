@@ -35,8 +35,8 @@ function Get-MonzoBalance {
     process {
         
         try {
-            $RequestBody = @{account_id = $AccountId}
-            $Response = Invoke-RestMethod -Method "GET" -Uri "https://api.monzo.com/balance" -Headers @{Authorization = "Bearer $($MonzoAccessToken)" } -Body $RequestBody -Verbose:($PSBoundParameters["Verbose"] -eq $true)
+            $RequestBody = @{ account_id = $AccountId }
+            $Response = Invoke-RestMethod -Method "GET" -Uri "https://api.monzo.com/balance" -Headers @{ Authorization = "Bearer $($MonzoAccessToken)" } -Body $RequestBody -Verbose:($PSBoundParameters["Verbose"] -eq $true) -ErrorAction "Stop"
         }
         catch {
             $PSCmdlet.ThrowTerminatingError($PSItem)
@@ -45,8 +45,8 @@ function Get-MonzoBalance {
     
     end {
         
-        # Populate PSCustom Object MonzoAPI.Balance.
-        [PSCustomObject]@{
+        # Populate PSCustomObject MonzoAPI.Balance.
+        return [PSCustomObject]@{
             PSTypeName      = "MonzoAPI.Balance"
             Accounts        = $Response
             RequestDateTime = (Get-Date)
