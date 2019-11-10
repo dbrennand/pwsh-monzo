@@ -109,7 +109,7 @@ function New-MonzoTokens {
 
     end {
 
-        # Populate PSCustom Object MonzoAPI.OAuth.Tokens.
+        # Populate PSCustomObject MonzoAPI.OAuth.Tokens.
         return [PSCustomObject]@{
             PSTypeName    = "MonzoAPI.OAuth.Tokens"
             AccessToken   = $Response.access_token
