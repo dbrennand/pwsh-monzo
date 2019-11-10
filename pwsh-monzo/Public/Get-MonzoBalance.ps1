@@ -18,7 +18,7 @@ function Get-MonzoBalance {
     .NOTES
         https://docs.monzo.com/#read-balance
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     [OutputType("MonzoAPI.Balance")]
     param (
         [Parameter(Mandatory = $true)]
