@@ -27,7 +27,7 @@ function Get-MonzoPots {
     process {
         
         try {
-            $Response = Invoke-RestMethod -Method "GET" -Uri "https://api.monzo.com/pots" -Headers @{Authorization = "Bearer $($MonzoAccessToken)" } -Verbose:($PSBoundParameters["Verbose"] -eq $true)
+            $Response = Invoke-RestMethod -Method "GET" -Uri "https://api.monzo.com/pots" -Headers @{ Authorization = "Bearer $($MonzoAccessToken)" } -Verbose:($PSBoundParameters["Verbose"] -eq $true)
         }
         catch {
             $PSCmdlet.ThrowTerminatingError($PSItem)
