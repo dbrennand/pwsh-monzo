@@ -31,7 +31,7 @@ function Put-MonzoPot {
     .NOTES
         https://docs.monzo.com/#deposit-into-a-pot 
     #>
-    [CmdletBinding(SupportsShouldProcess = $true)]
+    [CmdletBinding()]
     [OutputType("MonzoAPI.Pot")]
     param (
         [Parameter(Mandatory = $true)]
@@ -68,7 +68,7 @@ function Put-MonzoPot {
                 amount            = $Amount 
                 dedupe_id         = $DedupeId
             }
-            $Response = Invoke-RestMethod -Method "PUT" -Uri "https://api.monzo.com/pots/$PotId/deposit" -Headers @{Authorization = "Bearer $($MonzoAccessToken)" } -Body $RequestBody -Verbose:($PSBoundParameters["Verbose"] -eq $true)
+            $Response = Invoke-RestMethod -Method "PUT" -Uri "https://api.monzo.com/pots/$PotId/deposit" -Headers @{ Authorization = "Bearer $($MonzoAccessToken)" } -Body $RequestBody -Verbose:($PSBoundParameters["Verbose"] -eq $true) -ErrorAction "Stop"
         }
         catch {
             $PSCmdlet.ThrowTerminatingError($PSItem)
@@ -77,8 +77,8 @@ function Put-MonzoPot {
     
     end {
         
-        # Populate PSCustom Object MonzoAPI.Pot.
-        [PSCustomObject]@{
+        # Populate PSCustomObject MonzoAPI.Pot.
+        return [PSCustomObject]@{
             PSTypeName      = "MonzoAPI.Pot"
             Pot             = $Response
             DedupeId        = $DedupeId
