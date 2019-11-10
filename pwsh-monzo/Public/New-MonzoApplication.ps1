@@ -24,14 +24,14 @@ function New-MonzoApplication {
     
     .EXAMPLE
         $Credentials = Get-Credential
-        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://foobar.com/oauth/callback"
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://localhost:8888/oauth/callback"
     
     .EXAMPLE
         $ClientId = "ClientID"
         $ClientSecret = ConvertTo-SecureString -String "SuperSecretClientSecret" -AsPlainText -Force
         $Credentials = New-Object -TypeName "System.Management.Automation.PSCredential" -ArgumentList $ClientId, $ClientSecret
         $StateToken = [Guid]::NewGuid()
-        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://foobar.com/oauth/callback" -StateToken $StateToken
+        $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://localhost:8888/oauth/callback" -StateToken $StateToken
     #>
     [OutputType("MonzoAPI.Application")]
     param (
@@ -59,8 +59,8 @@ function New-MonzoApplication {
 
     process {
 
-        # Populate PSCustom Object MonzoAPI.Application.
-        [PSCustomObject]@{
+        # Populate PSCustomObject MonzoAPI.Application.
+        return [PSCustomObject]@{
             PSTypeName       = "MonzoAPI.Application"
             Name             = $Name
             ClientCredential = $ClientCredential
