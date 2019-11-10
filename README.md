@@ -1,5 +1,5 @@
 # pwsh-monzo
-PowerShell cmdlets to programmatically interact with the Monzo API.
+PowerShell functions to programmatically interact with the Monzo API.
 
 ## Dependencies
 
@@ -29,12 +29,12 @@ Import-Module -Name "{Full path to project}\pwsh-monzo\pwsh-monzo.psm1" -Verbose
 
 6. Click **Submit**.
 
-7. You can now [begin using the cmdlets](#Initalisation).
+7. You can now [begin using the functions](#Initalisation).
 
 
 ## Usage
 
-Provide the `-Verbose` parameter to all cmdlets to produce more output.
+Provide the `-Verbose` parameter to all functions to produce more output.
 
 ### Using the playground access token:
 
@@ -43,7 +43,7 @@ Provide the `-Verbose` parameter to all cmdlets to produce more output.
 * **NOTE:** This access token only lasts a few hours.
 
 ```powershell
-# You can now start using cmdlets straight away, passing in the playground access token.
+# You can now start using functions straight away, passing in the playground access token.
 $MonzoAccessToken = "Playground access token."
 $MonzoAccountId = ((Get-MonzoAccounts -MonzoAccessToken $MonzoAccessToken).Accounts | Select-Object -First 1).id
 Get-MonzoBalance -MonzoAccessToken $MonzoAccessToken -AccountId $MonzoAccountId
@@ -54,7 +54,7 @@ Get-MonzoBalance -MonzoAccessToken $MonzoAccessToken -AccountId $MonzoAccountId
 ```powershell
 $Credentials = Get-Credential
 $MonzoApplication = New-MonzoApplication -Name "MyMonzoApp" -ClientCredential $Credentials -RedirectUri "https://localhost:8888/oauth/callback"
-# NOTE: After running the cmdlet below, you will be prompted in the Monzo app to provide this app with account permissions.
+# NOTE: After running the functions below, you will be prompted in the Monzo app to provide this app with account permissions.
 # If you do not grant permissions to the app, all API calls WILL fail and you won't be able to retrieve an access token.
 $AuthorisationCode = New-MonzoAuthorisationCode -MonzoApplication $MonzoApplication -Email "foobar@somemail.com"
 $MonzoTokens = New-MonzoTokens -MonzoAuthorisationCode $AuthorisationCode
