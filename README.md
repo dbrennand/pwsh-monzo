@@ -1,7 +1,7 @@
 ![Build status](https://ci.appveyor.com/api/projects/status//branch/master?svg=true)
 
 # pwsh-monzo
-PowerShell cmdlets to interact programmatically interact with the Monzo API.
+PowerShell cmdlets to programmatically interact with the Monzo API.
 
 ## Dependencies
 
